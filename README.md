@@ -8,29 +8,27 @@ Note: since `youtube-dl` is essentially a python script, there is similar [nativ
 ## Installation:
 1. Make sure [youtube-dl](https://youtube-dl.org) is installed
 2. Make sure [Node.js](https://nodejs.org) is installed
-3. Install dependency: 
-	- `npm install youtube-dl-wrap`
-4. Unpack contents of this repository into your preferred folder 
+3. Unpack contents of this repository into your preferred folder 
 	- `git clone https://github.com/SerenityIslandEngineering/ytdl-web-gui.git`
-5. Configure youtube-dl:
+4. Configure youtube-dl:
  	- Create file `/etc/youtube-dl.conf`, containing the following:
-```bash
-# Required, for now, for effective downloads management:
---output '/your/folder/%(uploader)s-%(upload_date)s-(%(title).20s)-%(height)dp%(fps)d-(%(id)s).%(ext)s'
---download-archive /your/folder/ytdl.arch
+	```bash
+	# Required, for now, for effective downloads management:
+	--output '/your/folder/%(uploader)s-%(upload_date)s-(%(title).20s)-%(height)dp%(fps)d-(%(id)s).%(ext)s'
+	--download-archive /your/folder/ytdl.arch
 
-# Optional:
---no-part
---restrict-filenames
--f '(mp4)[height<=720]'
-```
-6. Check that path to youtube-dl config is correct:
+	# Optional:
+	--no-part
+	--restrict-filenames
+	-f '(mp4)[height<=720]'
+	```
+5. Check that path to youtube-dl config is correct:
 	- `ytdl_cfg_path = '/etc/youtube-dl.conf'` 
-7. Check that path to youtube-dl is correct:
+6. Check that path to youtube-dl is correct:
 	- `ytdl_path = '/your/path/youtube-dl'` 
-8. Start the server:
+7. Start the server:
 	- `node ytdl-web.js`
-9. By default, server is waiting for connections at `localhost:8001`
+8. By default, server is waiting for connections at `localhost:8001`
 
 ---
 NOTE: 
@@ -38,12 +36,12 @@ NOTE:
 	- required changing variable: `web-root = '/ytdl-web-gui'`
 	- required nginx config: 
 	```nginx
-        location /ytdl-web-gui {
-                location = /ytdl-web-gui { return 301 /ytdl-web-gui/; } # adds trailing slash only for 1st lvl for correct relative path handling
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                proxy_pass http://localhost:8001;
+	location /ytdl-web-gui {
+		location = /ytdl-web-gui { return 301 /ytdl-web-gui/; } # adds trailing slash only for 1st lvl for correct relative path handling
+		proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://localhost:8001;
 	}
 	```
 
