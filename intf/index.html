@@ -1,0 +1,214 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 5.0//EN">
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+		<link rel="icon" type="image/x-icon" href="favicon.ico" />
+		<link rel="shortcut icon" href="images/favicon.png" />
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<title>YouTube-DL Web Interface</title>
+	</head>
+	<body id="ytdl_body">
+
+<!-- Bookmarklet: javascript:(function(){location.href='http://localhost:8001/?new_url='+location.href;})(); -->
+
+		<div id="toolbar">
+			<div id="toolbar-openurl" title="Open URL"><input type="url" id="url_input" placeholder="https://www.youtube.com/watch?v=abcABC123aB"></div>
+			<div id="toolbar-open" onclick="new_url_input();" title="Add new download"></div>
+			<div id="toolbar-remove" class="disabled" title="Remove Selected Torrents"></div>
+			<div id="toolbar-separator"></div>
+			<div id="toolbar-start" class="disabled" title="Start Selected Torrents"></div>
+			<div id="toolbar-pause" class="disabled" title="Pause Selected Torrents"></div>
+<!--			<div id="toolbar-separator"></div>-->
+<!--			<div id="toolbar-start-all" title="Start All Torrents"></div>-->
+<!--			<div id="toolbar-pause-all" title="Pause All Torrents"></div>-->
+		</div>
+
+		<div id="statusbar">
+			<div id='filter'>
+				Show
+				<select id="filter-mode">
+					<option value="all">All</option>
+					<option value="downloading">Downloading</option>
+					<option value="removed">Removed</option>
+					<option value="finished">Finished</option>
+					<option value="paused">Paused?</option>
+				</select>
+				<input type="search" id="torrent_search" placeholder="Filter" />
+				<span id="filter-count">&nbsp;</span>
+			</div>
+
+			<div id='speed-info'>
+				<div id='speed-dn-container'>
+					<div id='speed-dn-label'>⬇️ 0.0 KB/s</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="torrent_container">
+			<ul class="torrent_list" id="torrent_list">
+<!--
+				incomplete seeding = bright green
+				complete seeding = green
+
+				incomplete magnet = red
+				complete magnet = gray
+
+				incomplete queued = blue
+				complete queued = blue
+
+				incomplete paused = gray
+				complete paused = dark gray
+
+				incomplete leeching = gray
+				complete leeching = blue
+
+				<li class="torrent compact">
+					<div class="torrent_progress_bar_container compact">
+						<div class="torrent_progress_bar incomplete leeching" style="width: 100%; display: block;"></div>
+						<div class="torrent_progress_bar complete leeching" style="width: 65%; display: block;"></div>
+					</div>
+					<div class="torrent_peer_details compact">Ratio: 0.21, ↑ 0 kB/s</div>
+					<div class="torrent_name compact">The Giver.Посвященный.eng.2014.mkv</div>
+				</li>
+
+				<li class="torrent compact even"><div class="torrent_progress_bar_container compact"><div class="torrent_progress_bar complete seeding" style="width: 100%; display: block;"></div><div class="torrent_progress_bar incomplete seeding" style="display: none;"></div></div><div class="torrent_peer_details compact">Ratio: 0.12, ↑ 0 kB/s</div><div class="torrent_name compact">Wild Things.Дикость.1998.avi</div></li>
+				<li class="torrent compact even"><div class="torrent_progress_bar_container compact"><div class="torrent_progress_bar incomplete magnet" style="width: 100%; display: block;"></div><div class="torrent_progress_bar incomplete seeding" style="width: 20%; display: block;"></div></div><div class="torrent_peer_details compact">Ratio: 0.12, ↑ 0 kB/s</div><div class="torrent_name compact">Wild Things.Дикость.1998.avi</div></li>
+				<li class="torrent compact even"><div class="torrent_progress_bar_container compact"><div class="torrent_progress_bar incomplete queued" style="width: 100%; display: block;"></div><div class="torrent_progress_bar incomplete leeching" style="width: 20%; display: block;"></div></div><div class="torrent_peer_details compact">Ratio: 0.12, ↑ 0 kB/s</div><div class="torrent_name compact">Wild Things.Дикость.1998.avi</div></li>
+				<li class="torrent compact even"><div class="torrent_progress_bar_container compact"><div class="torrent_progress_bar complete seeding" style="display: none;"></div><div class="torrent_progress_bar incomplete seeding" style="width: 100%; display: block;"></div></div><div class="torrent_peer_details compact"></div><div class="torrent_name compact">-</div></li>
+-->
+			</ul>
+		</div>
+
+		<div class="torrent_footer">
+			<div id="settings_menu" title="Settings Menu">&nbsp;</div>
+			<div id="prefs-button" title="Edit Preferences…">&nbsp;</div>
+<!--			<div id="turtle-button" title="Alternative Speed Limits">&nbsp;</div>-->
+			<div id="compact-button" title="Compact View">&nbsp;</div>
+			<div id='req_seq'>-</div>
+			<div id='state'>-</div>
+			</div>
+		</div>
+
+
+	<script>
+		const upd_interval_fast_ms =  1000;
+		const upd_interval_slow_ms = 10000;
+		const state_display = document.getElementById('state');
+		const req_seq_display = document.getElementById('req_seq');
+		const url_input = document.getElementById('url_input');
+		const DB = { files_active: [], files_finished: [] };
+
+		let hTimer = null; //setTimeout(update_state, upd_interval_ms); // if (hTimer !== null) { clearTimeout(hTimer); };
+		//function setUpdInterval(delay = upd_interval_ms) { if (hTimer !== null) { clearTimeout(hTimer); }; setTimeout(update_state, delay, delay); };
+
+		function new_url_input() {
+			//console.log(url_input.value)
+			// https://youtu.be/C8UPWhUy0y4?t=1952
+			// https://www.youtube.com/watch?v=uzkD5SeuwzM
+			//
+			let video_id = command('new_url', url_input.value);
+			//update_state();
+		}
+		function dl_list_upd() {
+			$('#torrent_list').empty();
+			//let total_download_bps = 0;
+			let even = true;
+			DB.files_active.forEach((f) => {
+				let name = (f.path !== null)?(f.path):(f.vid);
+				if (name.length === 0) { name = `${f.vid} (Waiting for file info from PID=${f.pid}...)`; };
+				$("#torrent_list").append(`<li id="li_pid${f.pid}" class="torrent compact ${((even)?"even":"")}">`+
+											'<div class="torrent_progress_bar_container compact">'+
+												`<div class="torrent_progress_bar incomplete leeching" style="width: 100%; display: block;"></div>`+
+												`<div class="torrent_progress_bar   complete leeching" style="width: ${f.progress.percent|0}%; display: block;"></div>`+
+												`<div class="torrent_peer_details compact">ETA: ${f.progress.eta} ⬇️ ${f.progress.currentSpeed}</div>`+
+											`</div><div class="torrent_name compact">${name}</div></li>\n`
+				);
+				even = !even;
+			});
+			//DB.files_finished.forEach((f) => { $("#torrent_list").append(`<li class="torrent compact ${(((even++)%2)?"even":"")}"><div class="torrent_progress_bar_container compact"><div class="torrent_progress_bar ${((f.path !== null)?("complete seeding"):('incomplete magnet'))}" style="width: 100%; display: block;"></div></div><div class="torrent_name compact">${((f.path !== null)?(f.path):(f.id + ' (Removed)'))}</div></li>\n`); });
+			// rev.dir filling
+			for(let j = DB.files_finished.length-1; j >= 0; --j) { const f = DB.files_finished[j]; $("#torrent_list").append(`<li class="torrent compact ${((even)?"even":"")}"><div class="torrent_progress_bar_container compact"><div class="torrent_progress_bar ${((f.path !== null)?("complete seeding"):('incomplete magnet'))}" style="width: 100%; display: block;"></div></div><div class="torrent_name compact">${((f.path !== null)?(f.path):(f.id + ' (Removed)'))}</div></li>\n`); even = !even; };
+		}
+		function command(cmd, arg) {
+			$.ajax({
+				url: `cmd?${cmd}=${arg}`,
+				method: "GET",
+				success: function(data) {
+					console.log('Recv data:', data);
+					//try { data = JSON.parse(data_raw); } catch (err) { console.error(err); return; }; // no need, it's already parsed
+					if (typeof(data) !== 'object') { console.error('Recevied Invalid DataSet!'); state_display.innerText = `Status: ERR`; return; }
+					req_seq_display.innerText = `Seq: ${data.req_seq}`;
+					state_display.innerText = `Status: ${data.state}`;
+					trig_stats_upd();
+				},
+				error: function(err) { console.error(err); }
+			});
+		}
+		function get_dl_list(type) {
+			$.ajax({
+				url: ((type)?('files_active'):('files_finished')), // "http://str-s1:8001/"+
+				method: "GET",
+				success: function(data) {
+					if (typeof(data) !== 'object') { console.error('Recevied Invalid DataSet!'); return; }
+					req_seq_display.innerText = `Seq: ${data.req_seq}`;
+					state_display.innerText = `Status: ${data.state}`;
+					let upd_trig;
+					if (type) { upd_trig = true; DB.files_active = data.files;   } // (DB.files_active.length > 0)
+					else      { upd_trig = !(DB.files_finished.length === data.files.length); DB.files_finished = data.files; };
+					if (upd_trig) { dl_list_upd(); };
+				},
+				error: function(err) { console.error(err); }
+			});
+		}
+		function trig_stats_upd() { clearTimeout(hTimer); get_stats(); };
+		async function get_stats() {
+			let new_state = { req_seq: '???', state: 'ERR', files_active: DB.files_active.length, files_finished: DB.files_finished.length };
+			try {
+				await $.ajax({
+					url: 'stats',
+					method: "GET",
+					success: function(data) {
+						if (typeof(data) !== 'object') { console.error('Recevied Invalid DataSet!'); return; }
+						new_state = data;
+					},
+					//error: function(err) { console.error(err); }
+				})
+			} catch(err) { /*console.error(err);*/ };
+
+			//console.log(`Recv stats: files_active: ${DB.files_active.length}<>${new_state.files_active}; files_finished: ${DB.files_finished.length} <> ${new_state.files_finished}`);
+			req_seq_display.innerText = `Seq: ${new_state.req_seq}`;
+			state_display.innerText = `Status: ${new_state.state}`;
+			if (new_state.files_active > 0 || DB.files_active.length > 0) { get_dl_list(1); } else { DB.files_active = []; };
+			if (DB.files_finished.length !== new_state.files_finished) { get_dl_list(0); };
+			hTimer = setTimeout(get_stats, ((new_state.files_active > 0)?(upd_interval_fast_ms):(upd_interval_slow_ms)));
+		}
+
+		document.addEventListener("visibilitychange", function() {
+			// TODO: stop interface updates when invisible and get insta-update when activated
+			if (document.visibilityState === 'hidden') {
+				console.log('Window is not visible now, stats refresh stopped');
+				clearTimeout(hTimer); hTimer = null;
+			} else {
+				console.log('Window is now visible, stats refresh started');
+				get_stats();
+			}
+		});
+
+		url_input.addEventListener("keydown", function(event) {
+			if (event.keyCode === 13) {
+				event.preventDefault(); // Cancel the default action, if needed
+				// document.getElementById("myBtn").click(); // Trigger the button element with a click
+				new_url_input();
+			}
+		});
+		get_stats();
+		//get_dl_list(0);
+		//get_dl_list(1);
+		//window.onload = function() { update_state(); get_arch_list(); };
+		window.onload = function() { $('#url_input').focus(); };
+	</script>
+
+	</body>
+</html>
+
