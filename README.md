@@ -39,18 +39,19 @@ NOTE:
 	- required nginx config: 
 	```nginx
         location /ytdl-web-gui {
-                location = /ytdl-web-gui { return 301 /ytdl-web-gui/; } # adds trailing slash only for 1st lvl path
+                location = /ytdl-web-gui { return 301 /ytdl-web-gui/; } # adds trailing slash only for 1st lvl for correct relative path handling
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_pass http://localhost:8001;
-		}
+	}
 	```
 
 
 ## TODO:
 - [ ] Convenient download type selector (ex: mp3 / mp4 / etc)
-- [ ] Interactive downloads mangement (pause/stop download, remove record, remove file, filter downloads, etc)
+- [ ] Interactive downloads mangement (downloads sort/filter, pause/stop download, remove record, remove file, etc)
+- [ ] Interactive web-gui-server and youtube-dl configuration
 - [ ] Download details (date added, thumbnail, full url, full title, uploader, etc)
 - [ ] npm package ytdl-web-gui for quickest install and auto-config
 - [ ] play file? (ex: calls web-player, that remember last played positions)
