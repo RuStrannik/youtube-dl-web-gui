@@ -52,6 +52,8 @@ NOTE:
 - [ ] Convenient download type selector (ex: mp3 / mp4 / etc)
 - [ ] Interactive downloads mangement (downloads sort/filter, pause/stop download, remove record, remove file, etc)
 - [ ] Interactive web-gui-server and youtube-dl configuration
-- [ ] Download details (date added, thumbnail, full url, full title, uploader, etc)
+- [ ] Async fetch file details (date added, thumbnail, full url, full title, uploader, etc)
+- [ ] Display download details
+- [ ] Select download directory, move downloaded file, etc
 - [ ] npm package ytdl-web-gui for quickest install and auto-config
 - [ ] play file? (ex: calls web-player, that remember last played positions)
