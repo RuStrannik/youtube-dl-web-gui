@@ -3,7 +3,7 @@ Node.js based solution inspired by Transmission web-interface. Suitable for Wind
 
 ![sample](sample_screen.png)
 
-Note: since `youtube-dl` is essentially a python script, there is similar [native python-based web gui server](https://github.com/d0u9/youtube-dl-webui). This repository is for those who, for certain reasons, prefer nodejs running as server.
+Note: since `youtube-dl` is essentially a python script, there is similar [native python-based web gui server](https://github.com/d0u9/youtube-dl-webui). This repository is for those, who for certain reasons prefer nodejs running as server.
 
 ## Installation:
 1. Make sure [youtube-dl](https://youtube-dl.org) is installed
