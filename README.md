@@ -3,6 +3,8 @@ Node.js based solution inspired by Transmission web-interface. Suitable for Wind
 
 ![sample](sample_screen.png)
 
+Note: since `youtube-dl` is essentially a python script, there is similar [native python-based web gui server](https://github.com/d0u9/youtube-dl-webui).
+
 ## Installation:
 1. Make sure [youtube-dl](https://youtube-dl.org) is installed
 2. Make sure [Node.js](https://nodejs.org) is installed
@@ -37,7 +39,7 @@ NOTE:
 	- required nginx config: 
 	```nginx
         location /ytdl-web-gui {
-                location = /ytdl { return 301 /ytdl-web-gui/; } # adds trailing slash only for 1st lvl path
+                location = /ytdl-web-gui { return 301 /ytdl-web-gui/; } # adds trailing slash only for 1st lvl path
                 proxy_set_header Host $host;
                 proxy_set_header X-Real-IP $remote_addr;
                 proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
