@@ -34,7 +34,7 @@ Note: since `youtube-dl` is essentially a python script, there is similar [nativ
 
 ---
 NOTE: 
-- Supported running through reverse proxy like nginx under subdirectory. (ex. https://example.com/ytdl-web-gui )
+- Supported running through reverse proxy like `nginx` under subdirectory. (ex. https://example.com/ytdl-web-gui )
 	- required changing variable: `web-root = '/ytdl-web-gui'`
 	- required nginx config: 
 	```nginx
