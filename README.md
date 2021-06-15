@@ -9,7 +9,7 @@ Note: since `youtube-dl` is essentially a python script, there is similar [nativ
 1. Make sure [youtube-dl](https://youtube-dl.org) is installed
 2. Make sure [Node.js](https://nodejs.org) is installed
 3. Unpack contents of this repository into your preferred folder 
-	- `git clone https://github.com/SerenityIslandEngineering/ytdl-web-gui.git`
+	- `git clone github.com/RuStrannik/youtube-dl-web-gui.git`
 4. Configure youtube-dl:
  	- Create file `/etc/youtube-dl.conf`, containing the following:
 	```bash
