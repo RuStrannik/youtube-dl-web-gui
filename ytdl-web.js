@@ -7,9 +7,9 @@ const url = require('url');
 const { timestamp, printf, printf_err, printf_dbg } = require('./stdlib');
 const ytdlw = require('./ytdl-wrap');
 
-const ytdl_path = 'youtube-dl'; // NOTE: if youtube-dl is installed properly, it is available as command
-const ytdl_cfg_path = '/etc/youtube-dl.conf'; // standard location of the youtube-dl config
-const web_root = '';
+const ytdl_path = 'youtube-dl';																		// NOTE: if youtube-dl is installed properly, it is available as command
+const ytdl_cfg_path = '/etc/youtube-dl.conf';														// standard location of the youtube-dl config
+const web_root = '';																				// Set to '/yourpath' to run from subdirectory after reverse proxy
 const web_port = 8001;
 
 const youtubeDlWrap = new ytdlw(ytdl_path);
