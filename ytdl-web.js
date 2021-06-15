@@ -8,7 +8,7 @@ const { timestamp, printf, printf_err, printf_dbg } = require('./stdlib');
 const ytdlw = require('./ytdl-wrap');
 
 const ytdl_path = 'youtube-dl'; // NOTE: if youtube-dl is installed properly, it is available as command
-const ytdl_cfg_path = '/etc/youtube-dl.conf';
+const ytdl_cfg_path = '/etc/youtube-dl.conf'; // standard location of the youtube-dl config
 const web_root = '';
 const web_port = 8001;
 
