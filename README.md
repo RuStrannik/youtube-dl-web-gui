@@ -1,4 +1,6 @@
-# Web GUI Server for YouTube Downloader Tool
+
+
+# ![logo](intf/images/favicon.ico) Web GUI Server for YouTube Downloader Tool
 Node.js based solution inspired by Transmission web-interface. Suitable for Windows and Linux
 
 ![sample](sample_screen.png)
